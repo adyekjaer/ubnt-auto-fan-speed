@@ -11,7 +11,7 @@ case "$(ubnt-device-info firmware || true)" in
     DATA_DIR="/mnt/data"
     INSTALL_TYPE=1
     ;;
-2*|3*|4*)
+2*|3*|4*|5*)
     DATA_DIR="/data"
     INSTALL_TYPE=2
     ;;
