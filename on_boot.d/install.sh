@@ -54,7 +54,7 @@ elif [ $INSTALL_TYPE -eq 2 ]; then
     echo "# for firmware v2.x.x and later"
     echo "#######################################################"
     # Install fancontrol if its not already done
-    apt list fancontrol 2> /dev/null | grep "installed" && echo "fancontrol already installed" || (echo "Installing fancontrol" && apt install fancontrol -y)
+    apt list fancontrol 2> /dev/null | grep "installed" && echo "fancontrol already installed" || (echo "Updating package lists" && apt-get update && echo "Installing fancontrol" && apt install fancontrol -y)
     # Grab the config fiie from the repo 
     wget --quiet -O /etc/fancontrol ${GH_URL_BASE}/on_boot.d/fancontrol
     echo "Restarting fancontrol" && service fancontrol restart
