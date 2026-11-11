@@ -5,22 +5,27 @@
 set -e
 
 # Get DataDir location
-DATA_DIR="/data"
-case "$(ubnt-device-info firmware || true)" in
-1*)
+FIRMWARE="$(ubnt-device-info firmware || true)"
+case "$FIRMWARE" in
+1.*)
     DATA_DIR="/mnt/data"
     INSTALL_TYPE=1
     ;;
-2*|3*|4*|5*)
+[2-9]*|[1-9][0-9]*)
+    # Firmware v2.x.x and later
     DATA_DIR="/data"
     INSTALL_TYPE=2
     ;;
 *)
-    echo "ERROR: No persistent storage found." 1>&2
-    INSTALL_TYPE=99
+    echo "ERROR: Unsupported or unknown firmware version '${FIRMWARE}'." 1>&2
     exit 1
     ;;
 esac
+
+if [ ! -d "$DATA_DIR" ]; then
+    echo "ERROR: No persistent storage found at ${DATA_DIR}." 1>&2
+    exit 1
+fi
 
 GH_REPO="adyekjaer/ubnt-auto-fan-speed"
 GH_URL_BASE="https://raw.githubusercontent.com/${GH_REPO}/HEAD"
@@ -42,11 +47,11 @@ if [ $INSTALL_TYPE -eq 1 ]; then
  
 elif [ $INSTALL_TYPE -eq 2 ]; then
     #
-    # Firmware v2.x.x, v3.x.x
+    # Firmware v2.x.x and later
     #
     echo "#######################################################"
     echo "# Installing ${GH_REPO}"
-    echo "# for firmware v2.x.x, v3.x.x, v4.x.x"
+    echo "# for firmware v2.x.x and later"
     echo "#######################################################"
     # Install fancontrol if its not already done
     apt list fancontrol 2> /dev/null | grep "installed" && echo "fancontrol already installed" || (echo "Installing fancontrol" && apt install fancontrol -y)
